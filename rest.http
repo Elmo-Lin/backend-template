@@ -1,0 +1,30 @@
+POST http://127.0.0.1:4000/books
+Content-Type: application/json
+
+{
+  "title": "The Great Gatsby",
+  "author": "F. Scott Fitzgerald",
+  "year": 1925
+}
+
+### 測試查詢所有書本 (Read - All)
+GET http://127.0.0.1:4000/books
+
+### 測試查詢特定書本 by ID (Read - One)
+GET http://127.0.0.1:4000/books/1
+
+### 測試更新書本資訊 (Update)
+PUT http://127.0.0.1:4000/books/1
+Content-Type: application/json
+
+{
+  "title": "The Great Gatsby - Updated",
+  "author": "F. Scott Fitzgerald",
+  "year": 1926
+}
+
+### 測試刪除書本 (Delete)
+DELETE http://127.0.0.1:4000/books/1
+
+### 確認刪除後是否空白
+GET http://127.0.0.1:4000/books
