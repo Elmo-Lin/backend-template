@@ -91,36 +91,44 @@ const createServer = (config: ServerConfig): FastifyInstance => {
       }),
       TE.match(
         (error) => reply.status(404).send(error),
-        (book) => reply.status(200).send(book)
+        ({ book }) => reply.status(200).send(book)
       )
     )();
   });
 
   server.put<UpdateBookRequest>("/books/:id", async (request, reply) => {
+    const { id } = request.params;
+    const { title, author, year } = request.body;
+  
     await pipe(
       TE.of({}),
       TE.bind("bookIndex", () => {
-        const bookIndex = books.findIndex(
-          (b) => b.id === parseInt(request.params.id, 10)
-        );
+        const bookIndex = books.findIndex((b) => b.id === parseInt(id));
         return bookIndex !== -1
           ? TE.right(bookIndex)
           : TE.left({ error: "Book not found!" });
       }),
-      TE.bind("updatedBook", ({ bookIndex }) => {
-        const { title, author, year } = request.body;
-        if (!title || !author || !year) {
-          return TE.left({ error: "Title, author, and year are required!" });
-        }
-        books[bookIndex] = { id: parseInt(request.params.id, 10), title, author, year };
-        return TE.right(books[bookIndex]);
+      TE.bind("validInput", () =>
+        pipe(
+          { title, author, year },
+          ({ title, author, year }) =>
+            title && author && year
+              ? TE.right({ title, author, year })
+              : TE.left({ error: "Title, author, and year are required!" })
+        )
+      ),
+      TE.bind("updatedBook", ({ bookIndex, validInput }) => {
+        const updatedBook = { id: parseInt(id), ...validInput };
+        books[bookIndex] = updatedBook;
+        return TE.right(updatedBook);
       }),
       TE.match(
         (error) => reply.status(400).send(error),
-        (updatedBook) => reply.status(200).send(updatedBook)
+        ({updatedBook}) => reply.status(200).send(updatedBook)
       )
     )();
   });
+  
 
   server.delete<DeleteBookRequest>("/books/:id", async (request, reply) => {
     await pipe(
