@@ -1,4 +1,4 @@
-import { startServer } from "./app";
+import { startServer } from "./book";
 
 interface ServerConfig {
   host: string;

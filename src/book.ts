@@ -2,43 +2,13 @@ import fastify, { FastifyInstance } from "fastify";
 import * as TE from "fp-ts/TaskEither";
 import { pipe } from "fp-ts/function";
 
-interface Book {
-  id: number;
-  title: string;
-  author: string;
-  year: number;
-}
-
-interface CreateBookRequest {
-  Body: {
-    title: string;
-    author: string;
-    year: number;
-  };
-}
-
-interface GetBookByIdRequest {
-  Params: {
-    id: string;
-  };
-}
-
-interface UpdateBookRequest {
-  Params: {
-    id: string;
-  };
-  Body: {
-    title: string;
-    author: string;
-    year: number;
-  };
-}
-
-interface DeleteBookRequest {
-  Params: {
-    id: string;
-  };
-}
+import {
+  Book,
+  CreateBookRequest,
+  GetBookByIdRequest,
+  UpdateBookRequest,
+  DeleteBookRequest,
+} from "./type/book";
 
 interface ServerConfig {
   host: string;
